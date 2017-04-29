@@ -274,6 +274,7 @@ service audiod /system/bin/audiod
 service config_bluetooth /system/bin/sh /system/etc/init.qcom.bt.sh "onboot"
     class late_start
     user root
+    seclabel u:r:bluetooth_loader:s0
     oneshot
 
 service fm_dl /system/bin/setprop hw.fm.init 1
@@ -306,6 +307,7 @@ service hciattach /system/bin/sh /system/etc/init.qcom.bt.sh
     user bluetooth
     group bluetooth net_bt_admin
     disabled
+    seclabel u:r:bluetooth_loader:s0
     oneshot
 
 service hvdcp /system/bin/hvdcp
@@ -388,6 +390,12 @@ service rmt_storage /system/bin/rmt_storage modem_st1 modem_st2 fsc recovery rad
     class core
     user root
 
+# OSS thermal management
+service thermanager /system/bin/thermanager /system/etc/thermanager.xml
+    class late_start
+    user root
+    group root
+
 service time_daemon /system/bin/time_daemon
    class late_start
    user root
@@ -441,16 +449,6 @@ on property:service.adb.root=1
     write /sys/class/android_usb/android0/restart_adbd 1
 
 on property:sys.boot_completed=1
-    write /sys/module/msm_hotplug/boost_lock_duration 4000
-    write /sys/module/msm_hotplug/cpus_boosted 1
-    write /sys/module/msm_hotplug/down_lock_duration 1000
-    write /sys/module/msm_hotplug/enabled 1
-    write /sys/module/msm_hotplug/fast_lane_load 178
-    write /sys/module/msm_hotplug/history_size 10
-    write /sys/module/msm_hotplug/max_cpus_online 4
-    write /sys/module/msm_hotplug/min_cpus_online 1
-    write /sys/module/msm_hotplug/offline_load 29
-    write /sys/module/msm_hotplug/update_rate 10
     start qrngp
 
 # Quick Charge 2.0
